@@ -6,16 +6,13 @@ const router= new express.Router();
 
 router.post('/start-scarping-page',pullMessagesFromQueue,async(req,res)=>{
     try{
-        let page
-        await req.messages.map(async(link)=>{
-            await scrapePage(link,req.body.depthCounter)
-            .then((scrapedPage)=>{
-                console.log(scrapedPage)
-                page=scrapedPage
-            })
-        })
-        console.log(page)
-        res.send(page)
+        if(req.messages.length>0){
+            let currentLink=req.messages[0].Body
+            let page= await scrapePage(currentLink,req.body.depthCounter)
+            res.send(page)
+        }
+        res.send(undefined)
+
     }catch(err){
         console.log(err)
     }
