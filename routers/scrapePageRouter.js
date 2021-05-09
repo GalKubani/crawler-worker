@@ -8,7 +8,7 @@ router.post('/start-scarping-page',pullMessagesFromQueue,async(req,res)=>{
     try{
         if(req.messages.length>0){
             let currentLink=req.messages[0].Body
-            let page= await scrapePage(currentLink,req.body.depthCounter)
+            let page= await scrapePage(currentLink,req.body.depthCounter,req.body.QueueName)
             res.send(page)
         }
         res.send(undefined)

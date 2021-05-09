@@ -2,7 +2,7 @@ const cheerio=require('cheerio')
 const redisClient=require('../../crawler-api/src/db/redis')
 const Axios=require('axios')
 
-const scrapePage=async (url,depthCounter)=>{
+const scrapePage=async (url,depthCounter,QueueName)=>{
     let pageData={}
  
     let pageUrl=url?.Body|| url;
@@ -31,7 +31,7 @@ const scrapePage=async (url,depthCounter)=>{
     }
     try{    
         redisClient.setexAsync(
-            "Scraped page: "+pageTitle,
+            "Scraped page from Queue: "+QueueName+" - "+pageTitle,
             2400,
             JSON.stringify(page)
         )
