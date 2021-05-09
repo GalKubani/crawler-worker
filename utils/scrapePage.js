@@ -21,7 +21,6 @@ const scrapePage=async (url,depthCounter,QueueName)=>{
             pageLinks.push(link)
         }    
     })
-
     const pageTitle=$('title').text()
     page={
         pageTitle,
@@ -31,7 +30,7 @@ const scrapePage=async (url,depthCounter,QueueName)=>{
     }
     try{    
         redisClient.setexAsync(
-            "Scraped page from Queue: "+QueueName+" - "+pageTitle,
+            "Scraped page from Queue: "+QueueName+" - "+pageTitle+" - "+depthCounter,
             2400,
             JSON.stringify(page)
         )
