@@ -10,12 +10,12 @@ const pullMessagesFromQueue= async(req,res,next)=>{
     try{
         const {Messages}=await sqs.receiveMessage({
             QueueUrl,
-            MaxNumberOfMessages: 1,
+            MaxNumberOfMessages: 10,
             MessageAttributeNames:[
                 "All"
             ],
             VisibilityTimeout:30,
-            WaitTimeSeconds:5
+            WaitTimeSeconds:15
         }).promise()
         req.messages=Messages || [];
         next()
