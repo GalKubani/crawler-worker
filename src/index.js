@@ -3,6 +3,7 @@ const cors= require('cors')
 const port= process.env.PORT
 
 const app= express()
+require('./db/mongoose')
 const scrapeRouter=require('./routers/scrapePageRouter')
 app.use(cors())
 app.use(express.json())
