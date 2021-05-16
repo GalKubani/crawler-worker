@@ -7,7 +7,6 @@ const router= new express.Router();
 let workerResponseUrl=`http://localhost:4040/worker-done`
 router.post('/start-scarping-page',pullMessagesFromQueue,async(req,res)=>{
     try{
-
         if(req.messages.length>0){
             if(!req.body.treeId){
                 let result= await scrapePage(req.messages[0].Body,undefined)
@@ -20,6 +19,9 @@ router.post('/start-scarping-page',pullMessagesFromQueue,async(req,res)=>{
                 pagesScraped.push(result.page)
             }
             Axios.post(workerResponseUrl,{pagesScraped,treeId:req.body.treeId})
+        }
+        else{
+            Axios.post(workerResponseUrl,{pagesScraped:[],treeId:req.body.treeId})
         }
         res.send("ok")
     }catch(err){

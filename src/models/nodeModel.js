@@ -10,10 +10,10 @@ const nodeSchema = new mongoose.Schema({
         required: true,
         unique:true
     },
-    pageLinks: {
-        type: Array,
-        default: []
-    }
+    nodeChildren: [{
+        link:{type:String,required:true},
+        node:{type:Object, default: {}}
+    }]
 });
 
 

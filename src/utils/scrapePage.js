@@ -41,6 +41,7 @@ const scrapePageData=async (url)=>{
     })
     const pageTitle=$('title').text()
     page={pageTitle ,pageUrl ,pageLinks }
+    if(page.pageTitle==="" && pageLinks.length===0) return url
     return page
 }
 const createNewTree=async (page)=>{
@@ -65,19 +66,50 @@ const createNewTree=async (page)=>{
 }
 const updateTree= async(treeId,pageToUpdate)=>{
     try{
-        let newNode= await Node.findOne({pageUrl:pageToUpdate.pageUrl})
-        if(!newNode){
-            newNode= await new Node(pageToUpdate)
-            await newNode.save()
-        }
+        let newNode= await checkNode(pageToUpdate)
         let updatedTree= await Tree.findById({_id:treeId})
-        updatedTree.treeChildren.map((node)=>{
-            if(node.link===pageToUpdate.pageUrl){
-                node.node=newNode._id
-            }
-        })
-        await updatedTree.save()
+        if(!updatedTree.isTreeComplete){
+            let totalChildren=0
+            updatedTree.treeChildren.map((node)=>{
+                if(node.link === pageToUpdate.pageUrl){ node.node=newNode._id  }
+                if(node.node != undefined){ totalChildren++ }
+            })
+            if(totalChildren===updatedTree.treeChildren.length){ updatedTree.isTreeComplete=true; }
+            await updatedTree.save()
+        }
         return updatedTree
     }catch(err){ console.log(err) }
+}
+const checkNode=async(pageToUpdate)=>{
+
+    let newNode=undefined
+    try{
+        newNode= await Node.findOne({pageUrl:pageToUpdate.pageUrl})
+    }catch(err){
+        console.log(err)
+        return newNode
+    }
+    if(!newNode){
+        let nodeChildren=[]
+        try{
+            for(let link of pageToUpdate.pageLinks){
+                let existingNode= await Node.findOne({pageUrl:link})
+                if(existingNode){nodeChildren.push({link,node:existingNode._id}) }
+                else{ nodeChildren.push({link}) }
+            }
+            newNode={
+                pageTitle:pageToUpdate.pageTitle,
+                pageUrl:pageToUpdate.pageUrl,
+                nodeChildren
+            }
+            newNode= await new Node(newNode)
+            await newNode.save()
+        }catch(err){
+            console.log(err)
+            return newNode
+        }
+    }
+
+
 }
 module.exports={scrapePage}
