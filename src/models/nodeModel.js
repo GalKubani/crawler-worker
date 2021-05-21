@@ -2,19 +2,23 @@ const mongoose = require('mongoose');
 
 const nodeSchema = new mongoose.Schema({
     pageTitle: {
-        type: String,
-        required:true
+        type: String
     },
     pageUrl: {
         type: String,
         required: true,
-        unique:true
+        unique: true
     },
     nodeChildren: [{
-        link:{type:String,required:true},
-        node:{type:Object, default: {}}
+        link: { type: String, required: true },
+        node: { type: String, default: '' }
     }]
 });
+nodeSchema.virtual('trees', {
+    ref: 'Tree',
+    localField: '_id',
+    foreignField: 'node'
+})
 
 
 const Node = mongoose.model('Node', nodeSchema);
