@@ -70,7 +70,7 @@ const updateTree = async (treeId, pageToUpdate) => {
         let newNode = await checkNode(pageToUpdate)
         if (!newNode) { return }
         let updatedTree = await Tree.findById({ _id: treeId })
-        if (!updatedTree.isTreeComplete) {
+        if (!updatedTree?.isTreeComplete) {
             let totalChildren = 0
             updatedTree.treeChildren.map((node) => {
                 if (node.link === pageToUpdate.pageUrl) { node.node = newNode }
